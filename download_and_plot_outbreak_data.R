@@ -36,8 +36,8 @@ plot_mutation_profiles <- function(muation_profile_paths, out_dir){
     # Plot the mutations as a heatmap and save it
     print(paste("Saving plot at: ", output_filepath))
     mutation = read.table(profile_path)
-    this_plot <- plotMutationHeatmap(mutation, title = paste("S-gene mutations in lineage", file_basename, sep=" "))
-    ggplot2::ggsave(filename = output_filepath, plot = this_plot, width = 8, height = 6, dpi = 300)
+    this_plot <- plotMutationHeatmap(mutation, title = paste("S-gene mutations in lineage", gsub("mutation_", "",file_basename_no_ext), sep=" "))
+    ggplot2::ggsave(filename = output_filepath, plot = this_plot, width = 10, height = 6, dpi = 300)
   }
 }
 
