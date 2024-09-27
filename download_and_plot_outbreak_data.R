@@ -8,6 +8,19 @@ make_sure_dir_exists <- function(dir_path) {
   }
 }
 
+extract_mutation_only <- function(mutation_table){
+  # Check if the "mutation_count" column exists
+  if (!"mutation_count" %in% colnames(mutation_table)) {
+    stop("The column 'mutation_count' is not found in the DataFrame.")
+  }
+  
+  # Strip "s:" from the beginning of each string in the "mutation_count" column
+  mutation_table$mutation_count <- gsub("^s:", "", mutation_table$mutation)
+  
+  # Return the cleaned "mutation_count" column
+  return(mutation_table$mutation_count)
+}
+
 download_mutation_profiles <- function(lineages, output_dir){
   make_sure_dir_exists(output_dir)
   
@@ -18,12 +31,15 @@ download_mutation_profiles <- function(lineages, output_dir){
     
     # filter for Spike:
     mutations_s <- subset(mutations, gene=="S")
+    mutations_s_only_mutation <- extract_mutation_only(mutations_s)
     # save to file
-    filepath = paste(paste(output_dir,"/mutation", sep=""), lineage, ".txt", sep="_")
-    write.table(mutations_s, file=filepath)
-    downloaded_paths = c(downloaded_paths, filepath)
+    filepath_raw = paste(paste(output_dir,"/mutation", sep=""), lineage, ".txt", sep="_")
+    filepath_stripped = paste(paste(output_dir,"/mutation", sep=""), lineage, "_stripped.txt", sep="_")
+    write.table(mutations_s, file=filepath_raw)
+    write.table(mutations_s_only_mutation, file=filepath_stripped, row.names = FALSE, col.names = FALSE, quote=FALSE)
+    downloaded_paths_raw = c(downloaded_paths, filepath_raw)
   }
-  return(downloaded_paths)
+  return(downloaded_paths_raw)
 }
 
 plot_mutation_profiles <- function(muation_profile_paths, out_dir){
