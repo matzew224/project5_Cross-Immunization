@@ -17,7 +17,6 @@ extract_mutation_only <- function(mutation_table){
   # Strip "s:" from the beginning of each string in the "mutation" column
   mutation_table$mutation_count <- gsub("^s:", "", mutation_table$mutation)
   
-  # Return the cleaned "mutation_count" column
   return(mutation_table$mutation_count)
 }
 
@@ -33,7 +32,7 @@ download_mutation_profiles <- function(lineages, output_dir){
     # filter for Spike:
     mutations_s <- subset(mutations, gene=="S")
     mutations_s_only_mutation <- extract_mutation_only(mutations_s)
-    # save to file
+    # save to files
     filepath_raw = paste(paste(output_dir,"/mutation", sep=""), 
                          lineage, ".txt", sep="_")
     filepath_stripped = paste(paste(output_dir,"/mutation", sep=""), 
@@ -43,7 +42,7 @@ download_mutation_profiles <- function(lineages, output_dir){
                 row.names = FALSE, col.names = FALSE, quote=FALSE)
     downloaded_paths_raw = c(downloaded_paths, filepath_raw)
   }
-  return(downloaded_paths_raw)
+  return(downloaded_paths_raw) # for plotting function
 }
 
 plot_mutation_profiles <- function(muation_profile_paths, out_dir){
