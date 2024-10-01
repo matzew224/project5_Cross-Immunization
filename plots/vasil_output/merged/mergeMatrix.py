@@ -57,7 +57,7 @@ def fill_combined_matrix(merged_matrix, name):
                 else:
                     print(f'CSV-Datei fehlt in {folder_path}')
             elif os.path.exists(os.path.join(root_dir, f'{lineage_2}_{lineage_1}')):
-                folder_name = f'{lineage_1}_{lineage_2}' #if lineage_1 < lineage_2 else f'{lineage_2}_{lineage_1}'
+                folder_name = f'{lineage_2}_{lineage_1}' #if lineage_1 < lineage_2 else f'{lineage_2}_{lineage_1}'
                 folder_path = os.path.join(root_dir, folder_name)
                 # CSV-Datei im entsprechenden Ordner laden
                 csv_file = os.path.join(folder_path, name)
