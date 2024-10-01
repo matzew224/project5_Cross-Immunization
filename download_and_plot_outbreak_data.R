@@ -22,8 +22,10 @@ extract_mutation_only <- function(mutation_table){
 
 download_mutation_profiles <- function(lineages, output_dir){
   make_sure_dir_exists(output_dir)
+  stripped_dir = paste(output_dir,"/stripped", sep="")
+  make_sure_dir_exists(stripped_dir)
   
-  downloaded_paths = c()
+  downloaded_paths_raw = c()
   
   for (lineage in lineages) {
     mutations = getMutationsByLineage(pangolin_lineage=lineage , frequency=0.75,
@@ -35,12 +37,12 @@ download_mutation_profiles <- function(lineages, output_dir){
     # save to files
     filepath_raw = paste(paste(output_dir,"/mutation", sep=""), 
                          lineage, ".txt", sep="_")
-    filepath_stripped = paste(paste(output_dir,"/mutation", sep=""), 
+    filepath_stripped = paste(paste(stripped_dir,"/mutation", sep=""), 
                               lineage, "_stripped.txt", sep="_")
     write.table(mutations_s, file=filepath_raw)
     write.table(mutations_s_only_mutation, file=filepath_stripped, 
                 row.names = FALSE, col.names = FALSE, quote=FALSE)
-    downloaded_paths_raw = c(downloaded_paths, filepath_raw)
+    downloaded_paths_raw = c(downloaded_paths_raw, filepath_raw)
   }
   return(downloaded_paths_raw) # for plotting function
 }
@@ -64,6 +66,20 @@ plot_mutation_profiles <- function(muation_profile_paths, out_dir){
   }
 }
 
+plot_muttions_by_lineages <- function(lineages, output_path){
+  make_sure_dir_exists(output_path)
+  mutations = getMutationsByLineage(lineages)
+  this_plot <- plotMutationHeatmap(mutations,
+               title = "Mutations with at least 75% prevalence in Variants of Concern", 
+               lightBorders = FALSE)
+  filename = paste("mutation_diffs", toString(lineages),".png", sep="_")
+  output_filepath = paste(output_path, filename, sep="/")
+  ggplot2::ggsave(filename = output_filepath, plot = this_plot, 
+                  width = 10, height = 6, dpi = 300)
+  
+}
+
+
 #set wd
 current_dir <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(current_dir)
@@ -80,3 +96,5 @@ lineages = c(
 outbreakinfo::authenticateUser()
 mutation_profile_paths = download_mutation_profiles(lineages, "./downloads")
 plot_mutation_profiles(mutation_profile_paths, "plots")
+plot_muttions_by_lineages(lineages, "plots")
+
