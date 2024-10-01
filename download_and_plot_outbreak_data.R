@@ -79,6 +79,22 @@ plot_muttions_by_lineages <- function(lineages, output_path){
   
 }
 
+plot_prevalences <- function(lineages, output_path, location="Germany"){
+  make_sure_dir_exists(output_path)
+  prevalence_data = c()
+  for (lineage in lineages){
+    prevalence = getPrevalence(lineage, location)
+    prevalence_data = c(prevalence_data, prevalence)
+    
+    this_plot <- plotPrevalenceOverTime(prevalence, title=paste(lineage,"prevalence over time in Germany."))
+    filename = paste(paste("prevalence_lineage", lineage, sep="_"), ".png")
+    output_filepath = paste(output_path,filename,sep="/")
+    ggplot2::ggsave(filename = output_filepath, plot = this_plot, 
+                    width = 10, height = 6, dpi = 300)
+  }
+  
+}
+
 
 #set wd
 current_dir <- dirname(rstudioapi::getSourceEditorContext()$path)
@@ -97,4 +113,5 @@ outbreakinfo::authenticateUser()
 mutation_profile_paths = download_mutation_profiles(lineages, "./downloads")
 plot_mutation_profiles(mutation_profile_paths, "plots")
 plot_muttions_by_lineages(lineages, "plots")
+plot_prevalences(lineages, "plots")
 
