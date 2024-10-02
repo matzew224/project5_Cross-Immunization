@@ -128,6 +128,7 @@ style_and_save_plot <- function(plot, outpath, lineages, date_breaks=NA){
     date_breaks="2 months"
   }
   else if (date_breaks!="default") {
+    # use what is given as argument
     plot <- plot + scale_x_date(date_breaks = date_breaks, date_labels = "%b %Y")
   }
   
@@ -146,7 +147,7 @@ plot_prevalences <- function(lineages, output_path, location="Germany", mode="li
         prevalence <- getPrevalence(pangolin_lineage = lineage, location = location)
       }
       else {
-        # mutations
+        # specific mutations ond not lineages
         prevalence <- getPrevalence(mutations = lineage, location=location)
       }
     
@@ -202,6 +203,9 @@ plot_prevalences(lineages, output_dir, date_breaks="3 months")
 # #TODO: truncate in this lineage to jan 2024
 lineages = c(
   "XBB.1.5",
+  "XBB.1.5.70",
+  "XBB.1.9.2",
+  "XBB.1.16",
   "XBB.1.16.24",
   "EG.5"
 )
