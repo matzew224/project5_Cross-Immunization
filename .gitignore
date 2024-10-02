@@ -47,3 +47,10 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# own
+\.idea
+data/
+envs/
+\.*
+.gitignore
