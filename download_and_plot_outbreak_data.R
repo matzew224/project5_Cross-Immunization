@@ -258,9 +258,20 @@ plot_prevalences(lineages, output_dir, date_breaks="3 months")
 mutations = c(
   "S:E484K",
   "S:F486P",
-  "S:R346T"
+  "S:R346T",
+  "S:N501Y",
+  "S:L18F"
 )
 plot_prevalences(mutations, output_dir, mode="mutations", merging="both")
+
+# mutations of cross-immunization example lineages from preprint paper
+lineages = c(
+  "BA.2",
+  "BA.2.12.1",
+  "BA.5",
+  "BE.10"
+)
+plot_prevalences(lineages, output_dir, date_breaks="3 months", location = "USA")
 
 # # get mutations for JN.1, JN.2, JN.3, KP.3, XBB.1.5:
 lineages = c(
