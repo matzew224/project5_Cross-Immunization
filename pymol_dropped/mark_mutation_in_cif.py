@@ -7,11 +7,10 @@ def color_mutations(cif_file, mutation_file, output_dir):
     # Load the protein structure from the .cif file
     cmd.load(cif_file)
 
-    # Set all residues to be slightly translucent (non-mutated residues)
+    # Set residues to be slightly translucent (non-mutated residues)
     cmd.show_as("cartoon")
     cmd.set("transparency", 0.5, "all")
 
-    # Prepare mutation log for the output .cfg file
     mutation_log = []
 
     # Read the mutation file and apply the mutations
@@ -26,7 +25,7 @@ def color_mutations(cif_file, mutation_file, output_dir):
             position = int(line[1:-1])
             mutated_aa = line[-1]
 
-            # PyMOL uses three-letter codes, so we need to convert the one-letter codes to three-letter
+            # PyMOL uses three-letter codes, so we need to convert
             one_to_three = {
                 'A': 'ALA', 'C': 'CYS', 'D': 'ASP', 'E': 'GLU', 'F': 'PHE',
                 'G': 'GLY', 'H': 'HIS', 'I': 'ILE', 'K': 'LYS', 'L': 'LEU',
@@ -44,7 +43,7 @@ def color_mutations(cif_file, mutation_file, output_dir):
             # Select the residue at the given position
             selection = f"(resi {position} and name CA)"
 
-            # Verify if the residue is the expected original amino acid
+            # Verify  residue is the expected AA
             resi_name = cmd.get_fastastr(f"(resi {position})")[0]
 
             if original_aa_3l not in resi_name:
@@ -54,10 +53,10 @@ def color_mutations(cif_file, mutation_file, output_dir):
             # Color the mutated residue red
             cmd.color("red", selection)
 
-            # Log the mutation for exporting to .cfg file
+            # Log for exporting to .cfg file
             mutation_log.append(f"Mutation at position {position}: {original_aa_3l} -> {mutated_aa_3l}\n")
 
-    # Make the non-mutated residues slightly translucent
+    # Make  non-mutated residues slightly translucent
     cmd.set("transparency", 0.5, "not resi " + " ".join(str(position)))
 
     # Ensure output directory exists
