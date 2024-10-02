@@ -1,6 +1,7 @@
 library(outbreakinfo)
 library(stringr) 
 library(ggplot2)
+library(RColorBrewer)
 
 make_sure_dir_exists <- function(dir_path) {
   if (!dir.exists(dir_path)) {
@@ -35,10 +36,10 @@ download_mutation_profiles <- function(lineages, output_dir){
     mutations_s <- subset(mutations, gene=="S")
     mutations_s_only_mutation <- extract_mutation_only(mutations_s)
     # save to files
-    filepath_raw = paste(paste(output_dir,"/mutation", sep=""), 
-                         lineage, ".txt", sep="_")
-    filepath_stripped = paste(paste(stripped_dir,"/mutation", sep=""), 
-                              lineage, "_stripped.txt", sep="_")
+    filepath_raw = paste(paste(output_dir,"/mutation_", sep=""), 
+                         lineage, ".txt", sep="")
+    filepath_stripped = paste(paste(stripped_dir,"/mutation_", sep=""), 
+                              lineage, "_stripped.txt", sep="")
     write.table(mutations_s, file=filepath_raw)
     write.table(mutations_s_only_mutation, file=filepath_stripped, 
                 row.names = FALSE, col.names = FALSE, quote=FALSE)
@@ -47,12 +48,12 @@ download_mutation_profiles <- function(lineages, output_dir){
   return(downloaded_paths_raw) # for plotting function
 }
 
-plot_mutation_profiles <- function(muation_profile_paths, out_dir){
+plot_mutation_profiles <- function(mutation_profile_paths, out_dir){
   make_sure_dir_exists(out_dir)
   for (profile_path in mutation_profile_paths){
     file_basename <- basename(profile_path)
     file_basename_no_ext = str_sub(tools::file_path_sans_ext(file_basename), 
-                                   end=-2)
+                                   end=-3)
     output_filename = paste("heatmap_", file_basename_no_ext, ".png", sep="")
     output_filepath= paste(out_dir, output_filename, sep="/")
     # Plot the mutations as a heatmap and save it
@@ -66,7 +67,8 @@ plot_mutation_profiles <- function(muation_profile_paths, out_dir){
   }
 }
 
-plot_muttions_by_lineages <- function(lineages, output_path){
+plot_mutations_by_lineages <- function(lineages, output_path){
+  # multiple lineages in one plot
   make_sure_dir_exists(output_path)
   mutations = getMutationsByLineage(lineages)
   this_plot <- plotMutationHeatmap(mutations,
@@ -79,39 +81,98 @@ plot_muttions_by_lineages <- function(lineages, output_path){
   
 }
 
-plot_prevalences <- function(lineages, output_path, location="Germany"){
-  make_sure_dir_exists(output_path)
-  prevalence_data = c()
-  for (lineage in lineages){
-    prevalence = getPrevalence(lineage, location)
-    prevalence_data = c(prevalence_data, prevalence)
-    
-    this_plot <- plotPrevalenceOverTime(prevalence, title=paste(lineage,"prevalence over time in Germany."))
-    filename = paste(paste("prevalence_lineage", lineage, sep="_"), ".png")
-    output_filepath = paste(output_path,filename,sep="/")
-    ggplot2::ggsave(filename = output_filepath, plot = this_plot, 
-                    width = 10, height = 6, dpi = 300)
-  }
+concat_lists <- function(list1, list2) {  
+  
+  keys <- unique(c(names(list1), names(list2)))
+  map2(list1[keys], list2[keys], c) %>% 
+    set_names(keys)  
   
 }
 
+plot_prevalences <- function(lineages, output_path, location="Germany"){
+  make_sure_dir_exists(output_path)
+  
+  # uncomment for one plot per lineage
+  # TODO: tidy up
+  # for (lineage in lineages){
+  #   prevalence = getPrevalence(lineage, location)
+  #   
+  #   this_plot <- plotPrevalenceOverTime(prevalence, title=paste(lineage,"prevalence over time in Germany."))
+  #   filename = paste(paste("prevalence_lineage", lineage, sep="_"), ".png")
+  #   output_filepath = paste(output_path,filename,sep="/")
+  #   ggplot2::ggsave(filename = output_filepath, plot = this_plot, 
+  #                   width = 10, height = 6, dpi = 300)
+  # }
+  
+  combined_prevalence_data <- getPrevalence(pangolin_lineage = lineages, location = location)
+  combined_plot <- plotPrevalenceOverTime(combined_prevalence_data, title = paste("Prevelance over time for lineages: ", toString(lineages)))
+  # palette="Set3"
+  # palette="Accent"
+  palette="Dark2"
+  
+
+  combined_plot <- combined_plot + scale_color_brewer(palette=palette) + scale_fill_brewer(palette=palette)
+  
+  
+  filename = paste("prevalence", gsub(",", "_", toString(lineages)), sep="_")
+  filename = gsub("\\.", "-", filename)
+  filename = gsub(" ", "", filename)
+  filename = paste(filename, ".svg", sep="")
+  
+  output_filepath = paste(output_path,filename,sep="/")
+  print(paste("Saving plot to :", output_filepath))
+  ggplot2::ggsave(filename = output_filepath, plot = combined_plot, 
+                  width = 15.5, height = 6, dpi = 300)
+    
+
+}
+
+
+
+## Run from here on
 
 #set wd
 current_dir <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(current_dir)
 
-# get mutations for JN.1, JN.2, JN.3, KP.3, XBB.1.5:
+# # get mutations for JN.1, JN.2, JN.3, KP.3, XBB.1.5:
+# lineages = c(
+#   "JN.1",
+#   "JN.2",
+#   "JN.3",
+#   "KP.3",
+#   "XBB.1.5"
+# )
+
+# get mutations for JN.1, JN.2, JN.3:
 lineages = c(
   "JN.1",
   "JN.2",
   "JN.3",
-  "KP.3",
-  "XBB.1.5"
 )
 
+# # get mutations for XBB.1.5 and sub lineages:
+# #TODO: truncate in this lineage to jan 2024
+# lineages = c(
+#   "XBB.1.5",
+#   # "XBB.1.5.70",
+#   "XBB.1.16",
+#   "EG.5"
+# )
+
+# get mutations for KP.2.3, KP.3, KP.4.1:
+#TODO: truncate in this lineage to jan 2024
+# lineages = c(
+#   "KP.2",
+#   "KP.3",
+#   "KP.4.1"
+# )
+
+
 outbreakinfo::authenticateUser()
+output_dir="plots"
 mutation_profile_paths = download_mutation_profiles(lineages, "./downloads")
-plot_mutation_profiles(mutation_profile_paths, "plots")
-plot_muttions_by_lineages(lineages, "plots")
-plot_prevalences(lineages, "plots")
+plot_mutation_profiles(mutation_profile_paths, output_dir)
+plot_mutations_by_lineages(lineages, output_dir)
+plot_prevalences(lineages, output_dir)
 
