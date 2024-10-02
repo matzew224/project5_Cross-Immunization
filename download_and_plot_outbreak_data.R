@@ -173,7 +173,7 @@ plot_prevalences <- function(lineages, output_path, location="Germany", mode="li
     filename = paste("prevalence", gsub(",", "_", toString(lineages)), sep="_")
     # filename = gsub("\\.", "-", filename)
     filename = gsub(" ", "", filename)
-    filename = paste(filename, ".svg", sep="")
+    filename = paste(filename, ".png", sep="")
     output_filepath = paste(output_path,filename,sep="/")
     
     style_and_save_plot(combined_plot, output_filepath, lineages, date_breaks=date_breaks)
