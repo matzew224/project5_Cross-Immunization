@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 
 # Verzeichnis mit den CSV-Dateien
 directory = '/home/vincent/sarsProject/project5_Cross-Immunization/plots/vasil_output/merged'
+directory = './min_avg'
 
 # Gehe durch jede Datei im Verzeichnis
 for filename in os.listdir(directory):
