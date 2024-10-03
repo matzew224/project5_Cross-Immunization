@@ -197,7 +197,16 @@ lineages = c(
   "JN.2",
   "JN.3"
 )
-plot_prevalences(lineages, output_dir, date_breaks="3 months")
+plot_prevalences(lineages, output_dir, date_breaks="2 months")
+
+# # get mutations for the JN. and KP.3:
+lineages = c(
+  "JN.1",
+  "JN.2",
+  "JN.3",
+  "KP.3"
+)
+plot_prevalences(lineages, output_dir, date_breaks="2 months")
 
 # # get mutations for XBB.1.5 and sub lineages:
 # #TODO: truncate in this lineage to jan 2024
@@ -267,11 +276,11 @@ plot_prevalences(mutations, output_dir, mode="mutations", merging="both")
 # mutations of cross-immunization example lineages from preprint paper
 lineages = c(
   "BA.2",
-  "BA.2.12.1",
-  "BA.5",
-  "BE.10"
+  "BA.2.12.1"#,
+  # "BA.5",
+  # "BE.10"
 )
-plot_prevalences(lineages, output_dir, date_breaks="3 months", location = "USA")
+plot_prevalences(lineages, output_dir, date_breaks="3 months")
 
 # # get mutations for JN.1, JN.2, JN.3, KP.3, XBB.1.5:
 lineages = c(
