@@ -135,7 +135,8 @@ style_and_save_plot <- function(plot, outpath, lineages, date_breaks=NA){
   
   print(paste("Saving plot to :", outpath))
   ggplot2::ggsave(filename = outpath, plot = plot, 
-                  width = 15.5, height = 6, dpi = 500)
+                  # width = 15.5, height = 6, dpi = 500)
+                  width = 15.5, height = 2.5, dpi = 500)
   
 }
 
