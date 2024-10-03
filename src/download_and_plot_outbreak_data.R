@@ -4,7 +4,7 @@ library(ggplot2)
 library(RColorBrewer)
 
 outbreakinfo::authenticateUser()
-output_dir="plots"
+output_dir="../plots"
 
 make_sure_dir_exists <- function(dir_path) {
   if (!dir.exists(dir_path)) {
@@ -294,7 +294,7 @@ plot_prevalences(lineages, output_dir, date_breaks="3 months")
 
 
 
-# mutation_profile_paths = download_mutation_profiles(lineages, "./downloads")
+# mutation_profile_paths = download_mutation_profiles(lineages, "../downloads")
 # plot_mutation_profiles(mutation_profile_paths, output_dir)
 # plot_mutations_by_lineages(lineages, output_dir)
 
